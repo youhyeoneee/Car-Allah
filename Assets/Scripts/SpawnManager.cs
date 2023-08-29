@@ -6,10 +6,11 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     private RoadSpawner roadSpawner;
-    
+    private PlotSpawner plotSpawner;
     void Start()
     {
         roadSpawner = GetComponent<RoadSpawner>();
+        plotSpawner = GetComponent<PlotSpawner>();
     }
 
     void Update()
@@ -22,7 +23,7 @@ public class SpawnManager : MonoBehaviour
         if (other.CompareTag("SpawnTrigger"))
         {
             roadSpawner.MoveRoad();
+            plotSpawner.SpawnPlot();
         }
-
     }
 }
