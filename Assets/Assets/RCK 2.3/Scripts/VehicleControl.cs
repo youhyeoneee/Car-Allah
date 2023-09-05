@@ -145,7 +145,7 @@ public class VehicleControl : MonoBehaviour
 
     private float steer = 0;
     private float accel = 0.0f;
-    [HideInInspector]
+    // [HideInInspector]
     public bool brake;
 
     private bool shifmotor;
@@ -274,7 +274,6 @@ public class VehicleControl : MonoBehaviour
 
     void Awake()
     {
-
         if (carSetting.automaticGear) NeutralGear = false;
 
         myRigidbody = transform.GetComponent<Rigidbody>();
@@ -403,7 +402,14 @@ public class VehicleControl : MonoBehaviour
     }
 
 
+    public void RestCar()
+    {
+        brake = true;
+        myRigidbody.AddForce(Vector3.up * 500000);
+        myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
 
+    }
+    
     void OnCollisionEnter(Collision collision)
     {
 

@@ -11,6 +11,8 @@ public class PlotSpawner : MonoBehaviour
     private float lastZPos = 10f;
 
     public List<GameObject> plots;
+    private float offset = 30f;
+
     void Start()
     {
         xPlotRight = xPlotLeft * -1;

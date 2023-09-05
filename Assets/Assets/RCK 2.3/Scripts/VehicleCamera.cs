@@ -204,7 +204,18 @@ public class VehicleCamera : MonoBehaviour
 
     }
 
-
+    #region singleton
+    public static VehicleCamera instance = null;
+    private void Awake()
+    {
+        if(instance != null)
+        {
+            Destroy(this.gameObject);
+        }    
+        instance = this;
+        DontDestroyOnLoad(this.gameObject);
+    }
+    #endregion
 
     void Start()
     {
