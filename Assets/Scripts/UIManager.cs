@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Button = UnityEngine.UIElements.Button;
@@ -46,6 +47,14 @@ public class UIManager : MonoBehaviour
     public GameUIClass GameUI;
     public CarUIClass CarUI;
     public RepairShopUIClass RepairShopUI;
+    public GameOverUIClass GameOverUI;
+    
+    [System.Serializable]
+    public class GameOverUIClass
+    {
+        public GameObject gameOverImg;
+        public TMP_Text gameOverReasonText;
+    }
     
     [System.Serializable]
     public class RepairShopUIClass
@@ -199,6 +208,12 @@ public class UIManager : MonoBehaviour
 
         CarUI.tachometerNeedle.rectTransform.rotation = Quaternion.Euler(0, 0, -thisAngle);
         CarUI.barShiftGUI.rectTransform.localScale = new Vector3(carScript.powerShift / 100.0f, 1, 1);
+    }
+
+    public void ShowGameOverUI(string partName)
+    {
+        GameOverUI.gameOverImg.SetActive(true);
+        GameOverUI.gameOverReasonText.text = $"{partName}의 수명이 다했습니다..";
     }
 
 }

@@ -136,12 +136,16 @@ public class GameManager : MonoBehaviour
     }
 
 
+    // 부품이 하나라도 이용 불가능한 상태라면 게임 종료
     public bool GameOver()
     {
         for (int i = 0; i < carDatas.Count; i++)
         {
             if (!carDatas[i].IsFunctional())
+            {
+                uiManager.ShowGameOverUI (carDatas[i].GetName());
                 return true;
+            }
         }
 
         return false;

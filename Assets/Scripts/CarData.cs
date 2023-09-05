@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,24 +10,42 @@ public enum CarPartName
     TIRE,
 }
 
-[System.Serializable]
-public class CarData
+public class CarPartStrings
 {
-    public CarPartName partName;         // 부품 이름 (ex. 엔진오일, 바퀴 등)
+    private Dictionary<CarPartName, string> partNames = new Dictionary<CarPartName, string>()
+    {
+        { CarPartName.ENGINE_OIL, "엔진 오일" },
+        { CarPartName.TIRE, "타이어" },
+    };
+
+    public string GetPartName(CarPartName part)
+    {
+        if (partNames.ContainsKey(part))
+        {
+            return partNames[part];
+        }
+        return "Unknown";
+    }
+}
+
+[System.Serializable]
+public class CarData 
+{
+    public CarPartName partName;
     public float lifespan;            // 수명 (km)
     public float lastRepairedDistance; //  최근 정비 이후 거리 (km)
-        
-    public CarData(CarPartName name, int life)
+    private CarPartStrings partStrings = new CarPartStrings();
+    
+    
+    // 이름 반환 메서드 : Enum -> String 이름 반환
+    public string GetName()
     {
-        partName = name;
-        lifespan = life;
-        lastRepairedDistance = 0; // 초기화
+        return partStrings.GetPartName(partName);
     }
 
     // 정비 메서드 : 부품 정비 후 마지막 정비 거리 업데이트
     public void Repair()
     {
-        Debug.Log(partName + "REPAIRED");
         lastRepairedDistance = 0;
     }
 
