@@ -5,6 +5,8 @@
 
 *.DS_Store
 
+WebGL Builds/
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
