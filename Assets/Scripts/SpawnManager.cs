@@ -7,6 +7,8 @@ public class SpawnManager : MonoBehaviour
 {
     private RoadSpawner roadSpawner;
     private PlotSpawner plotSpawner;
+    
+    
     void Start()
     {
         roadSpawner = GetComponent<RoadSpawner>();
@@ -20,7 +22,8 @@ public class SpawnManager : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("SpawnTrigger"))
+        
+        if (other.CompareTag("SpawnTrigger") && GameManager.Instance.gameState == GameState.Playing)
         {
             roadSpawner.MoveRoad();
             plotSpawner.SpawnPlot();

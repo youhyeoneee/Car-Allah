@@ -51,7 +51,9 @@ public class ChangeScene : MonoBehaviour
     // Racing -> RepairShop
     private void OnTriggerStay(Collider other)
     {
-        LoadScene(SceneNames.RepairShopScene);
+        // 게임 플레이 중일 때만 !
+        if (gameManager.gameState == GameState.Playing)
+           LoadScene(SceneNames.RepairShopScene);
     }
     
     
