@@ -14,8 +14,8 @@ public class VehicleControl : MonoBehaviour
 
     public ControlMode controlMode = ControlMode.simple;
 
+    public CarPartName brokenPart;
     public bool activeControl = false;
-
 
     // Wheels Setting /////////////////////////////////
 
@@ -409,6 +409,24 @@ public class VehicleControl : MonoBehaviour
         myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
 
     }
+
+    public void BrokenCar()
+    {
+
+        switch (brokenPart)
+        {
+            case CarPartName.TIRE:
+                float torqueForce = myRigidbody.mass * 100f; // 회전력 크기 조절
+                Vector3 torqueDirection = Vector3.up; // 뒤집히는 방향 조절
+                myRigidbody.AddTorque(torqueDirection * torqueForce);
+                break;
+            case CarPartName.ENGINE_OIL:
+                myRigidbody.velocity = Vector3.zero; 
+                myRigidbody.angularVelocity = Vector3.zero; //( addTorque 사용시)
+                myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
+                break;
+        }
+    }
     
     void OnCollisionEnter(Collision collision)
     {
@@ -516,8 +534,7 @@ public class VehicleControl : MonoBehaviour
                     accel = Input.GetAxis("Vertical");
                     brake = Input.GetButton("Jump");
                     shift = Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift);
-
-
+                    
                 }
 
             }
@@ -536,6 +553,8 @@ public class VehicleControl : MonoBehaviour
             steer = 0.0f;
             brake = false;
             shift = false;
+            
+            BrokenCar();
         }
 
 

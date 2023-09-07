@@ -258,6 +258,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plot_empty (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2248766293141139509, guid: 3aa5fb4a035b44b76a77d08ffbbe539c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7117772032112176767, guid: 3aa5fb4a035b44b76a77d08ffbbe539c, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -332,7 +336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &595943353
 Transform:
   m_ObjectHideFlags: 0
@@ -1420,6 +1424,10 @@ PrefabInstance:
     - target: {fileID: 7507568160035475389, guid: b4c065be2f98b481bbaf8bdb64ac893e, type: 3}
       propertyPath: m_Name
       value: house_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7507568160035475389, guid: b4c065be2f98b481bbaf8bdb64ac893e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4c065be2f98b481bbaf8bdb64ac893e, type: 3}

@@ -67,20 +67,29 @@ public class UIManager : MonoBehaviour
     [System.Serializable]
     public class GameUIClass
     {
+        public GameObject uiObject;
         public Text timeText; // 남은 시간
-        public Text distanceText; // 주행 거리
+        public Text distanceText;  // 주행 거리
+
+        public void DeactiveUI()
+        {
+            uiObject.SetActive(false);
+        }
     }
     
     [System.Serializable]
     public class CarUIClass
     {
-
+        public GameObject uiObject;
         public Image tachometerNeedle;
         public Image barShiftGUI;
 
         public Text speedText;
         public Text GearText;
-
+        public void DeactiveUI()
+        {
+            uiObject.SetActive(false);
+        }
     }
     
     private int gearst = 0;
@@ -150,7 +159,7 @@ public class UIManager : MonoBehaviour
         // Distance UI /////////////////////////////////
         // 주행 거리 계산 (거리 = 속도 × 시간)
         GameUI.timeText.text = $"{minute.ToString("00")} : {second.ToString("00")}";
-        GameUI.distanceText.text = $"{distanceTraveled.ToString("F2")}";
+        GameUI.distanceText.text = $"{distanceTraveled.ToString("F0")}";
     }
     
     public void ShowCarUI(VehicleControl carScript)
@@ -214,6 +223,9 @@ public class UIManager : MonoBehaviour
     {
         GameOverUI.gameOverImg.SetActive(true);
         GameOverUI.gameOverReasonText.text = $"{partName}의 수명이 다했습니다..";
+        
+        GameUI.DeactiveUI();
+        CarUI.DeactiveUI();
     }
 
 }
