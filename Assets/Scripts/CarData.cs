@@ -34,7 +34,6 @@ public class CarData
     public CarPartName partName;
     public float lifespan;            // 수명 (km)
     public float lastRepairedDistance; //  최근 정비 이후 거리 (km)
-    public GameObject brokenParticle;
     private CarPartStrings partStrings = new CarPartStrings();
     
     // 이름 반환 메서드 : Enum -> String 이름 반환
@@ -54,9 +53,5 @@ public class CarData
     {
         return (lifespan - lastRepairedDistance) > 0;
     }
-
-    public void Broken()
-    {
-        brokenParticle.SetActive(true);
-    }
+    
 }

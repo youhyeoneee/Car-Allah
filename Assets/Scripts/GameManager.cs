@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public enum GameState
 {
+    Waiting, // 대기
     Playing, // 진행중 
     GameOver // 종료
 }
@@ -48,17 +50,18 @@ public class GameManager : MonoBehaviour
     }
     
     // Game Setting
-    public GameState gameState = GameState.Playing;
+    public GameState gameState = GameState.Waiting;
     public delegate void OnRepairShop(bool isRepairShop);
     public OnRepairShop onRepairShop;
     public bool isRacingScene = true;
+    public bool GameWin = true;
     
     // Player Setting /////////////////////////////////
     public Transform target;
     public List<CarData> carDatas;
     
     // Time Setting /////////////////////////////////
-    private float totalTime = 180.0f; // 총 시간 : 3분
+    private float totalTime = 90.0f; // 총 시간 : 1분 30초
     private float remainTime; // 경과 시간
 
     // Distance Setting /////////////////////////////////
@@ -72,21 +75,25 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         uiManager = UIManager.Instance;
-        
+        onRepairShop += IsRacingScene;
+    }
+
+    void Init()
+    {
         // 게임이 시작하면 남은 시간을 3분으로 초기화 한다.
         remainTime = totalTime;
 
         // 주행 거리를 초기화한다.
         distanceTraveled = 0.0f;
-
-        onRepairShop += IsRacingScene;
     }
-
-    void FixedUpdate()
+    
+    void Update()
     {
     
         switch (gameState)
         {
+            case GameState.Waiting:
+                break;
             case GameState.Playing:
                 if (remainTime > 0.0f)
                 {
@@ -116,7 +123,7 @@ public class GameManager : MonoBehaviour
                         carScript = (VehicleControl)target.GetComponent<VehicleControl>();
 
                         // 계기판 UI 표시 
-                        uiManager.ShowCarUI(carScript);
+                        uiManager.CarUI.ShowCarUI(carScript);
                 
                 
                         // 거리 계산 (과장된 거리)
@@ -125,6 +132,13 @@ public class GameManager : MonoBehaviour
                         UpdateCarData(distance);
                     }
                     
+                    
+                }
+                else
+                {
+                    // 게임 종료
+                    gameState = GameState.GameOver;
+                    uiManager.ShowGameOverUI();
                 }
                 break;
             case GameState.GameOver:
@@ -150,6 +164,12 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void GameStart()
+    {
+        gameState = GameState.Playing;
+        Init();
+    }
+    
     // 부품이 하나라도 이용 불가능한 상태라면 게임 종료
     public bool GameOver()
     {
@@ -157,7 +177,7 @@ public class GameManager : MonoBehaviour
         {
             if (!carDatas[i].IsFunctional())
             {
-                carDatas[i].Broken(); // 파티클 활성화 
+                GameWin = false;
                 carScript.brokenPart = carDatas[i].partName; 
                 uiManager.ShowGameOverUI (carDatas[i].GetName()); // UI에 터진 부품 전달 
                 return true;

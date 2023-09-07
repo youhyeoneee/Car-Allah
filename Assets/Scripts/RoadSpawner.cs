@@ -15,11 +15,6 @@ public class RoadSpawner : MonoBehaviour
             roads = roads.OrderBy(r => r.transform.position.z).ToList();
         }
     }
-    
-    void Update()
-    {
-        
-    }
 
     public void MoveRoad()
     {
@@ -33,7 +28,5 @@ public class RoadSpawner : MonoBehaviour
         moveRoad.transform.localPosition = new(0, 0, newZ);
         roads.Add(moveRoad);
         
-        Debug.Log($"Spawn to {newZ}");
-
     }
 }

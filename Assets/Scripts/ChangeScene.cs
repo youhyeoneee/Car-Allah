@@ -9,9 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour
 {
-    [SerializeField] private Button changeSceneBtn;
-
     private GameManager gameManager;
+    
     public static class SceneNames
     {
         public const string RacingScene = "Racing";
@@ -21,21 +20,12 @@ public class ChangeScene : MonoBehaviour
     private void Start()
     {
         gameManager = GameManager.Instance;
-        
-        // 돌아가기 버튼에 할당
-        if (changeSceneBtn != null)
-        {
-            changeSceneBtn.onClick.AddListener(()=> LoadScene(SceneNames.RacingScene));
-        }
     }
     
-    
 
-    private void LoadScene(string sceneName)
+    public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
-        
-        // Bug :: GamaManager.instance가 씬 2번 전환시 null 
         
         if (sceneName == SceneNames.RepairShopScene)
         {

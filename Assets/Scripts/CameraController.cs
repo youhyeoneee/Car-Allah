@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
 
     private float yOffset;
     private float zOffset;
-
+    
     
     // Shake Setting /////////
     private bool isShaked = false;
@@ -29,11 +29,17 @@ public class CameraController : MonoBehaviour
         if (isOnShake)
             return;
 
-        if (GameManager.Instance.gameState == GameState.GameOver && !isShaked)
+        if (GameManager.Instance.gameState == GameState.GameOver && !GameManager.Instance.GameWin)
         {
-            isShaked = true;
-            OnShakeCamera();
-            return;
+            if (!isShaked)
+            {
+                isShaked = true;
+                OnShakeCamera();
+                
+                return;
+            }
+ 
+       
         }
   
     }

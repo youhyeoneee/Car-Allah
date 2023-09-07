@@ -12,6 +12,7 @@ public class VehicleControl : MonoBehaviour
 {
 
 
+    public List<GameObject> brokenParticles;
     public ControlMode controlMode = ControlMode.simple;
 
     public CarPartName brokenPart;
@@ -416,11 +417,13 @@ public class VehicleControl : MonoBehaviour
         switch (brokenPart)
         {
             case CarPartName.TIRE:
+                brokenParticles[0].SetActive(true);
                 float torqueForce = myRigidbody.mass * 100f; // 회전력 크기 조절
                 Vector3 torqueDirection = Vector3.up; // 뒤집히는 방향 조절
                 myRigidbody.AddTorque(torqueDirection * torqueForce);
                 break;
             case CarPartName.ENGINE_OIL:
+                brokenParticles[1].SetActive(true);
                 myRigidbody.velocity = Vector3.zero; 
                 myRigidbody.angularVelocity = Vector3.zero; //( addTorque 사용시)
                 myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
@@ -554,7 +557,8 @@ public class VehicleControl : MonoBehaviour
             brake = false;
             shift = false;
             
-            BrokenCar();
+            if (!GameManager.Instance.GameWin)
+                BrokenCar();
         }
 
 

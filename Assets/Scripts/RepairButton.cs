@@ -20,13 +20,14 @@ public class RepairButton : MonoBehaviour
         _carData = carData;
         repairBtn.onClick.AddListener(()=> UpdateButton());
         partName.text = _carData.GetName();
-        lastRepairedDistanceText.text = "최근 수리 : " + _carData.lastRepairedDistance.ToString("F2") + "km";
+         
+        lastRepairedDistanceText.text = $"정비 후 {_carData.lastRepairedDistance.ToString("F0")} km 주행함.";
     }
 
     private void UpdateButton()
     {
         _carData.Repair();
-        lastRepairedDistanceText.text = "최근 수리 : " + _carData.lastRepairedDistance.ToString("F2") + "km";
+        lastRepairedDistanceText.text = $"정비 후 {_carData.lastRepairedDistance.ToString("F0")} km 주행함.";
     }
     
 }

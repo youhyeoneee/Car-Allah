@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using Button = UnityEngine.UIElements.Button;
 
 public class UIManager : MonoBehaviour
 {
@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
     }
 
 
+    public StartUIClass StartUI;
     public GameUIClass GameUI;
     public CarUIClass CarUI;
     public RepairShopUIClass RepairShopUI;
@@ -59,10 +60,58 @@ public class UIManager : MonoBehaviour
     [System.Serializable]
     public class RepairShopUIClass
     {
+        public GameObject uiObject;
         public GameObject repairPanel;
-        public GameObject backBtn;
+        public Button backBtn;
         public GameObject repairBtnPrefab;
+        private GameManager gameManager;
+        public void ActivateUI(bool isActivated)
+        {
+            uiObject.SetActive(isActivated);
+        }
+
+        public void InitUI()
+        {
+            backBtn.onClick.AddListener(()=> backBtn.gameObject.GetComponent<ChangeScene>().LoadScene(ChangeScene.SceneNames.RacingScene));
+            
+            if (!gameManager)
+                gameManager = GameManager.Instance;
+            // 정비소 수리 패널 초기화 & 비활성화
+            for (int i = 0; i < gameManager.carDatas.Count; i++)
+            {
+            
+                GameObject btnObj = Instantiate(repairBtnPrefab);
+                btnObj.transform.position = repairPanel.transform.position;
+    
+                RectTransform btnpos = btnObj.GetComponent<RectTransform>();
+                btnpos.SetParent(repairPanel.transform, false);
+            
+                // 내용 세팅 
+                RepairButton btn = btnObj.GetComponent<RepairButton>();
+    
+                if (btn != null)
+                    btn.SetButton(gameManager.carDatas[i]);
+            }
+        }
     }
+    
+    [System.Serializable]
+    public class StartUIClass
+    {
+        public GameObject uiObject;
+        public Button gameStartBtn; // 게임 시작 버튼
+
+        public void ActivateUI(bool isActivated)
+        {
+            uiObject.SetActive(isActivated);
+        }
+
+        public void InitUI()
+        {
+            gameStartBtn.onClick.AddListener(() => GameManager.Instance.GameStart());
+        }
+    }
+    
     
     [System.Serializable]
     public class GameUIClass
@@ -71,9 +120,9 @@ public class UIManager : MonoBehaviour
         public Text timeText; // 남은 시간
         public Text distanceText;  // 주행 거리
 
-        public void DeactiveUI()
+        public void ActivateUI(bool isActivated)
         {
-            uiObject.SetActive(false);
+            uiObject.SetActive(isActivated);
         }
     }
     
@@ -86,16 +135,72 @@ public class UIManager : MonoBehaviour
 
         public Text speedText;
         public Text GearText;
-        public void DeactiveUI()
+        private int gearst = 0;
+        private float thisAngle = -150;
+
+        public void ActivateUI(bool isActivated)
         {
-            uiObject.SetActive(false);
+            uiObject.SetActive(isActivated);
+        }
+        
+        public void ShowCarUI(VehicleControl carScript)
+        {
+            gearst = carScript.currentGear;
+            speedText.text = ((int)carScript.speed).ToString();
+
+            if (carScript.carSetting.automaticGear)
+            {
+
+                if (gearst > 0 && carScript.speed > 1)
+                {
+                    GearText.color = Color.green;
+                    GearText.text = gearst.ToString();
+                }
+                else if (carScript.speed > 1)
+                {
+                    GearText.color = Color.red;
+                    GearText.text = "R";
+                }
+                else
+                {
+                    GearText.color = Color.white;
+                    GearText.text = "N";
+                }
+
+            }
+            else
+            {
+
+                if (carScript.NeutralGear)
+                {
+                    GearText.color = Color.white;
+                    GearText.text = "N";
+                }
+                else
+                {
+                    if (carScript.currentGear != 0)
+                    {
+                        GearText.color = Color.green;
+                        GearText.text = gearst.ToString();
+                    }
+                    else
+                    {
+
+                        GearText.color = Color.red;
+                        GearText.text = "R";
+                    }
+                }
+
+            }
+        
+            thisAngle = (carScript.motorRPM / 20) - 175;
+            thisAngle = Mathf.Clamp(thisAngle, -180, 90);
+
+            tachometerNeedle.rectTransform.rotation = Quaternion.Euler(0, 0, -thisAngle);
+            barShiftGUI.rectTransform.localScale = new Vector3(carScript.powerShift / 100.0f, 1, 1);
         }
     }
     
-    private int gearst = 0;
-    private float thisAngle = -150;
-    private float restTime = 0.0f;
-
     private GameManager gameManager;
 
     void Start()
@@ -103,38 +208,27 @@ public class UIManager : MonoBehaviour
         gameManager = GameManager.Instance;
 
         gameManager.onRepairShop += ShowRepairShopUI;
-
-
-        InitRepairShopUI();
+        
+        RepairShopUI.InitUI();
         ShowRepairShopUI(false);
-
     }
 
     void Update()
     {
-    }
-
-
-    private void InitRepairShopUI()
-    {
-                
-        // 정비소 수리 패널 초기화 & 비활성화
-        for (int i = 0; i < gameManager.carDatas.Count; i++)
+        switch (gameManager.gameState)
         {
-            
-            GameObject btnObj = Instantiate(RepairShopUI.repairBtnPrefab);
-            btnObj.transform.position = RepairShopUI.repairPanel.transform.position;
-    
-            RectTransform btnpos = btnObj.GetComponent<RectTransform>();
-            btnpos.SetParent(RepairShopUI.repairPanel.transform);
-            
-            // 내용 세팅 
-            RepairButton btn = btnObj.GetComponent<RepairButton>();
-    
-            if (btn != null)
-                btn.SetButton(gameManager.carDatas[i]);
+            case GameState.Waiting:
+                StartUI.ActivateUI(true);
+                StartUI.InitUI();
+                break;
+            case GameState.Playing:
+                StartUI.ActivateUI(false);
+                break;
         }
     }
+
+
+    
     private void ShowRepairShopUI(bool isRepairShop)
     {
         if (isRepairShop)
@@ -144,14 +238,22 @@ public class UIManager : MonoBehaviour
                 GameObject btnObj = RepairShopUI.repairPanel.transform.GetChild(i).gameObject;
                 // 내용 세팅 
                 RepairButton btn = btnObj.GetComponent<RepairButton>();
-    
+
                 if (btn != null)
                     btn.SetButton(gameManager.carDatas[i]);
             }
         }
         
-        RepairShopUI.repairPanel.SetActive(isRepairShop);
-        RepairShopUI.backBtn.SetActive(isRepairShop);
+        if (isRepairShop)
+        {
+            RepairShopUI.ActivateUI(true);
+            CarUI.ActivateUI(false);
+        }
+        else
+        {
+            RepairShopUI.ActivateUI(false);
+            CarUI.ActivateUI(true); 
+        }
     }
     
     public void ShowGameUI(float minute, float second, float distanceTraveled)
@@ -162,70 +264,19 @@ public class UIManager : MonoBehaviour
         GameUI.distanceText.text = $"{distanceTraveled.ToString("F0")}";
     }
     
-    public void ShowCarUI(VehicleControl carScript)
-    {
-        gearst = carScript.currentGear;
-        CarUI.speedText.text = ((int)carScript.speed).ToString();
+    
 
-        if (carScript.carSetting.automaticGear)
-        {
-
-            if (gearst > 0 && carScript.speed > 1)
-            {
-                CarUI.GearText.color = Color.green;
-                CarUI.GearText.text = gearst.ToString();
-            }
-            else if (carScript.speed > 1)
-            {
-                CarUI.GearText.color = Color.red;
-                CarUI.GearText.text = "R";
-            }
-            else
-            {
-                CarUI.GearText.color = Color.white;
-                CarUI.GearText.text = "N";
-            }
-
-        }
-        else
-        {
-
-            if (carScript.NeutralGear)
-            {
-                CarUI.GearText.color = Color.white;
-                CarUI.GearText.text = "N";
-            }
-            else
-            {
-                if (carScript.currentGear != 0)
-                {
-                    CarUI.GearText.color = Color.green;
-                    CarUI.GearText.text = gearst.ToString();
-                }
-                else
-                {
-
-                    CarUI.GearText.color = Color.red;
-                    CarUI.GearText.text = "R";
-                }
-            }
-
-        }
-        
-        thisAngle = (carScript.motorRPM / 20) - 175;
-        thisAngle = Mathf.Clamp(thisAngle, -180, 90);
-
-        CarUI.tachometerNeedle.rectTransform.rotation = Quaternion.Euler(0, 0, -thisAngle);
-        CarUI.barShiftGUI.rectTransform.localScale = new Vector3(carScript.powerShift / 100.0f, 1, 1);
-    }
-
-    public void ShowGameOverUI(string partName)
+    public void ShowGameOverUI(string partName = "")
     {
         GameOverUI.gameOverImg.SetActive(true);
-        GameOverUI.gameOverReasonText.text = $"{partName}의 수명이 다했습니다..";
         
-        GameUI.DeactiveUI();
-        CarUI.DeactiveUI();
+        if (partName.Length > 0)
+            GameOverUI.gameOverReasonText.text = $"{partName}의 수명이 다했습니다..";
+        else
+            GameOverUI.gameOverReasonText.text = "축하합니다! 시간 내에 자동차를 고장내지 않았습니다!";
+
+        GameUI.ActivateUI(false);
+        CarUI.ActivateUI(false);
     }
 
 }
