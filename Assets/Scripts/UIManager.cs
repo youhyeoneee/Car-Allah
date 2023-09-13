@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -55,6 +56,13 @@ public class UIManager : MonoBehaviour
     {
         public GameObject gameOverImg;
         public TMP_Text gameOverReasonText;
+        public TMP_Text timeText;
+        public TMP_Text distanceText;
+        public void ActivateUI(bool isActivated)
+        {
+            gameOverImg.SetActive(isActivated);
+        }
+
     }
     
     [System.Serializable]
@@ -72,7 +80,7 @@ public class UIManager : MonoBehaviour
 
         public void InitUI()
         {
-            backBtn.onClick.AddListener(()=> backBtn.gameObject.GetComponent<ChangeScene>().LoadScene(ChangeScene.SceneNames.RacingScene));
+            backBtn.onClick.AddListener(()=> backBtn.gameObject.GetComponent<ChangeScene>().LoadScene(SceneNames.RacingScene));
             
             if (!gameManager)
                 gameManager = GameManager.Instance;
@@ -100,6 +108,7 @@ public class UIManager : MonoBehaviour
     {
         public GameObject uiObject;
         public Button gameStartBtn; // 게임 시작 버튼
+        public TMP_InputField carNumberInput; // 차량 번호 입력 
 
         public void ActivateUI(bool isActivated)
         {
@@ -219,6 +228,7 @@ public class UIManager : MonoBehaviour
         {
             case GameState.Waiting:
                 StartUI.ActivateUI(true);
+                GameOverUI.ActivateUI(false);
                 StartUI.InitUI();
                 break;
             case GameState.Playing:
@@ -256,11 +266,12 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public void ShowGameUI(float minute, float second, float distanceTraveled)
+    public void ShowGameUI(string time,float distanceTraveled)
     {
         // Distance UI /////////////////////////////////
         // 주행 거리 계산 (거리 = 속도 × 시간)
-        GameUI.timeText.text = $"{minute.ToString("00")} : {second.ToString("00")}";
+
+        GameUI.timeText.text = time;
         GameUI.distanceText.text = $"{distanceTraveled.ToString("F0")}";
     }
     
@@ -268,13 +279,18 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameOverUI(string partName = "")
     {
-        GameOverUI.gameOverImg.SetActive(true);
+
+        GameOverUI.ActivateUI(true);
         
         if (partName.Length > 0)
             GameOverUI.gameOverReasonText.text = $"{partName}의 수명이 다했습니다..";
         else
             GameOverUI.gameOverReasonText.text = "축하합니다! 시간 내에 자동차를 고장내지 않았습니다!";
 
+        // 결과
+        GameOverUI.timeText.text = "남은 시간 : "+ GameUI.timeText.text;
+        GameOverUI.distanceText.text = "주행 거리 : " + GameUI.distanceText.text + "km";
+        
         GameUI.ActivateUI(false);
         CarUI.ActivateUI(false);
     }
