@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PlotSpawner : MonoBehaviour
 {
-    private int initAmount = 5;
+    private int initAmount = 11;
     private float plotSize = 30f;
     private float xPlotLeft = -73.67f;
     private float xPlotRight = 36.3f;
     private float lastZPos = 10f;
+    private float yPos = 0.025f;
 
     public List<GameObject> plots;
     public GameObject emptyPlot;
@@ -26,10 +27,10 @@ public class PlotSpawner : MonoBehaviour
     {
         GameObject plotLeft = plots[Random.Range(0, plots.Count)];            
 
-        float zPos = lastZPos + plotSize;
+        float zPos = lastZPos + plotSize;       
         lastZPos = zPos;
 
-        Instantiate(plotLeft, new Vector3(xPlotLeft, 0.025f, zPos), plotLeft.transform.rotation);
-        Instantiate(emptyPlot, new Vector3(xPlotRight, 0.025f, zPos), new Quaternion(0, 180, 0, 0));
+        Instantiate(plotLeft, new Vector3(xPlotLeft, yPos, zPos), plotLeft.transform.rotation);
+        Instantiate(emptyPlot, new Vector3(xPlotRight, yPos, zPos), new Quaternion(0, 180, 0, 0));
     }
 }

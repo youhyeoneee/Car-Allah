@@ -414,23 +414,29 @@ public class VehicleControl : MonoBehaviour
     public void BrokenCar()
     {
 
+        
         switch (brokenPart)
         {
-            case CarPartName.TIRE:
+            // 여기 리팩토링 해야함
+            case CarPartName.TIRE: case CarPartName.WIPER: case CarPartName.TIMING_BELT:
                 brokenParticles[0].SetActive(true);
                 float torqueForce = myRigidbody.mass * 100f; // 회전력 크기 조절
                 Vector3 torqueDirection = Vector3.up; // 뒤집히는 방향 조절
                 myRigidbody.AddTorque(torqueDirection * torqueForce);
                 break;
-            case CarPartName.ENGINE_OIL:
+            case CarPartName.ENGINE_OIL: case CarPartName.MISSION_OIL: case CarPartName.BREAK_OIL:
                 brokenParticles[1].SetActive(true);
-                myRigidbody.velocity = Vector3.zero; 
-                myRigidbody.angularVelocity = Vector3.zero; //( addTorque 사용시)
-                myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
+                StopCar();
                 break;
         }
     }
-    
+
+    public void StopCar()
+    {
+        myRigidbody.velocity = Vector3.zero; 
+        myRigidbody.angularVelocity = Vector3.zero; //( addTorque 사용시)
+        myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
+    }
     void OnCollisionEnter(Collision collision)
     {
 

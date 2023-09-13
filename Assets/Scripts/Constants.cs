@@ -11,3 +11,13 @@ public static class SceneNames
     public static readonly string RacingScene = "Racing";
     public static readonly string RepairShopScene = "RepairShop";
 }
+
+public enum CarPartName
+{
+    ENGINE_OIL,
+    TIRE,
+    MISSION_OIL,
+    WIPER,
+    BREAK_OIL,
+    TIMING_BELT,
+}

@@ -217,9 +217,7 @@ public class UIManager : MonoBehaviour
         gameManager = GameManager.Instance;
 
         gameManager.onRepairShop += ShowRepairShopUI;
-        
-        RepairShopUI.InitUI();
-        ShowRepairShopUI(false);
+        gameManager.gameOver += ShowGameOverUI;
     }
 
     void Update()
@@ -266,30 +264,35 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public void ShowGameUI(string time,float distanceTraveled)
+    public void ShowGameUI(string time, int distanceTraveled)
     {
         // Distance UI /////////////////////////////////
         // 주행 거리 계산 (거리 = 속도 × 시간)
-
+        
         GameUI.timeText.text = time;
-        GameUI.distanceText.text = $"{distanceTraveled.ToString("F0")}";
+        GameUI.distanceText.text = $"{distanceTraveled.ToString()}";
     }
-    
-    
 
-    public void ShowGameOverUI(string partName = "")
+
+    public void InitRepairUI()
+    {
+        RepairShopUI.InitUI();
+        ShowRepairShopUI(false);
+    }
+
+    public void ShowGameOverUI(bool isWin, string time, int distance)
     {
 
         GameOverUI.ActivateUI(true);
         
-        if (partName.Length > 0)
-            GameOverUI.gameOverReasonText.text = $"{partName}의 수명이 다했습니다..";
-        else
+        if (isWin)
             GameOverUI.gameOverReasonText.text = "축하합니다! 시간 내에 자동차를 고장내지 않았습니다!";
+        else
+            GameOverUI.gameOverReasonText.text = $"{gameManager.brokenCarData.PartNameString}의 수명이 다했습니다..";
 
         // 결과
-        GameOverUI.timeText.text = "남은 시간 : "+ GameUI.timeText.text;
-        GameOverUI.distanceText.text = "주행 거리 : " + GameUI.distanceText.text + "km";
+        GameOverUI.timeText.text = $"남은 시간 : {time}";
+        GameOverUI.distanceText.text = $"주행 거리 : {distance} km";
         
         GameUI.ActivateUI(false);
         CarUI.ActivateUI(false);

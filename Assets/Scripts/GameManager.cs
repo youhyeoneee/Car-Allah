@@ -58,8 +58,11 @@ public class GameManager : MonoBehaviour
     public GameState gameState = GameState.Waiting;
 
     public delegate void OnRepairShop(bool isRepairShop);
-
     public OnRepairShop onRepairShop;
+    public delegate void GameOver(bool isWin, string time, int distance); // 게임 종료 이벤트함수 
+    public GameOver gameOver;
+
+    
     public bool isRacingScene = true;
     public bool GameWin = true;
 
@@ -67,6 +70,7 @@ public class GameManager : MonoBehaviour
     public Transform target;
     public List<CarData> carDatas;
     public string carNumber;
+    public CarData brokenCarData;
     
     // Time Setting /////////////////////////////////
     private float totalTime = 90.0f; // 총 시간 : 1분 30초
@@ -74,8 +78,7 @@ public class GameManager : MonoBehaviour
     private float minute, second;
 
     // Distance Setting /////////////////////////////////
-    private float distanceTraveled = 0f; // 주행 거리 (단위: km)
-
+    private int distanceTraveled = 0; // 주행 거리 (단위: km)
     private VehicleControl carScript;
 
     // Singleton Object /////////////////////////////////
@@ -88,6 +91,9 @@ public class GameManager : MonoBehaviour
         rankManager = RankManager.Instance;
         
         onRepairShop += IsRacingScene;
+        gameOver += ChangeGameOver;
+        
+        InitCarData();
     }
 
     void Init()
@@ -96,10 +102,13 @@ public class GameManager : MonoBehaviour
         remainTime = totalTime;
 
         // 주행 거리를 초기화한다.
-        distanceTraveled = 0.0f;
+        distanceTraveled = 0;
 
-        // 차량 데이터 초기화
-        InitCarData();
+        // 차량 데이터 남은 거리 초기화
+        for (int i = 0; i < carDatas.Count; i++)
+        {
+            carDatas[i].lastRepairedDistance = 0;
+        }
     }
 
     void Update()
@@ -108,14 +117,14 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.Waiting:
-                
                 break;
             case GameState.Playing:
                 if (remainTime > 0.0f)
                 {
-                    if (GameOver())
+                    if (IsGameOver())
                     {
-                        gameState = GameState.GameOver;
+                        gameState = GameState.GameOver;                        
+                        gameOver.Invoke(false, ChangeTimeToString(minute, second), distanceTraveled);
                         return;
                     }
 
@@ -124,6 +133,10 @@ public class GameManager : MonoBehaviour
 
                     minute = Mathf.Floor(remainTime / 60); // 분을 구하기위해서 60으로 나눈다.
                     second = Mathf.Floor(remainTime % 60); // 나머지 시간을 초로 계산한다.
+
+                    if (minute < 0) minute = 0.0f;
+                    if (second < 0) second = 0.0f;
+
                     uiManager.ShowGameUI(ChangeTimeToString(minute, second), distanceTraveled);
 
                     if (!target)
@@ -143,7 +156,7 @@ public class GameManager : MonoBehaviour
 
 
                         // 거리 계산 (과장된 거리)
-                        float distance = carScript.speed * ((Time.deltaTime) / 3600f) * 10000; // 시간을 초로 변환
+                        int distance = (int)(carScript.speed * ((Time.deltaTime) / 3600f) * 20000); // 시간을 초로 변환
                         distanceTraveled += distance;
                         UpdateCarData(distance);
                     }
@@ -153,9 +166,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     // 게임 종료
-                    gameState = GameState.GameOver;
-                    UpdateRank();
-                    uiManager.ShowGameOverUI();
+                    gameOver.Invoke(true, ChangeTimeToString(minute, second), distanceTraveled);
                 }
 
                 break;
@@ -167,6 +178,24 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void ChangeGameOver(bool isWin, string time, int distance)
+    {
+        gameState = GameState.GameOver;
+        GameWin = isWin; 
+        if (isWin)
+        {
+            carScript.StopCar(); // 멈춤
+        }
+        else
+        {
+            if (brokenCarData != null)
+            {
+                carScript.brokenPart = brokenCarData.PartName;
+            }
+        }
+        
+        UpdateRank();
+    }
 
     private void IsRacingScene(bool isRepairshop)
     {
@@ -175,13 +204,17 @@ public class GameManager : MonoBehaviour
 
     private void InitCarData()
     {
-        for (int i = 0; i < carDatas.Count; i++)
+        foreach(CarPartName enumItem in System.Enum.GetValues(typeof(CarPartName)))
         {
-            carDatas[i].lastRepairedDistance = 0;
+            CarData newCarData = new CarData(enumItem);
+            carDatas.Add(newCarData);
         }
+        
+        // 정비샵 UI 세팅
+        uiManager.InitRepairUI();
     }
     
-    private void UpdateCarData(float distance)
+    private void UpdateCarData(int distance)
     {
         for (int i = 0; i < carDatas.Count; i++)
         {
@@ -203,23 +236,20 @@ public class GameManager : MonoBehaviour
     }
     
     // 부품이 하나라도 이용 불가능한 상태라면 게임 종료
-    public bool GameOver()
+    public bool IsGameOver()
     {
         for (int i = 0; i < carDatas.Count; i++)
         {
             if (!carDatas[i].IsFunctional())
             {
-                GameWin = false;
-                carScript.brokenPart = carDatas[i].partName; 
-                UpdateRank();
-                uiManager.ShowGameOverUI (carDatas[i].GetName()); // UI에 터진 부품 전달
+                brokenCarData = carDatas[i];
                 return true;
             }
         }
         
         return false;
     }
-
+    
     // 랭크 추가
     public void UpdateRank()
     {
@@ -230,8 +260,6 @@ public class GameManager : MonoBehaviour
             time = ChangeTimeToString(minute, second)
         };
         
-        Debug.Log($"{carNumber} {distanceTraveled} {ChangeTimeToString(minute, second)}");
-
         rankManager.UpdateRankData(newRankData);
     }
 }

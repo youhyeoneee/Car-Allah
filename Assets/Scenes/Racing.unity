@@ -7344,13 +7344,7 @@ MonoBehaviour:
   isRacingScene: 1
   GameWin: 1
   target: {fileID: 1932954354}
-  carDatas:
-  - partName: 0
-    lifespan: 20000
-    lastRepairedDistance: 0
-  - partName: 1
-    lifespan: 10000
-    lastRepairedDistance: 0
+  carDatas: []
   carNumber: 
 --- !u!4 &1842314254
 Transform:
