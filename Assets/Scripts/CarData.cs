@@ -73,7 +73,7 @@ public class CarData
         partNameString = partInfos.GetPartName(partName);
     }
 
-    // 정비 메서드 : 부품 정비 후 마지막 정비 거리 업데이트
+    // 수리 메서드 : 부품 수리 후 마지막 정비 거리 업데이트
     public void Repair()
     {
         lastRepairedDistance = 0;

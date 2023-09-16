@@ -10,7 +10,6 @@ public class RankLoader : MonoBehaviour
      [SerializeField] private Scrollbar   scrollbar;
      [SerializeField] private Transform   rankRataParent;
      [SerializeField] private RankDataUI    myRankDataUI;
-     [SerializeField] private RankManager rankManager;
      
      private List<RankDataUI> rankDataUIList;
      
@@ -26,7 +25,6 @@ public class RankLoader : MonoBehaviour
          }
      }
 
-
      private void OnEnable()
      {
          SetRankListUI();
@@ -39,7 +37,7 @@ public class RankLoader : MonoBehaviour
      void SetRankListUI()
      {
          // 저장된 랭킹 데이터 불러오기
-         List<RankData> loadedRankList = rankManager.LoadRankData();
+         List<RankData> loadedRankList = RankManager.Instance.LoadRankData();
          int rankCnt = loadedRankList.Count;
          
          for (int i = 0; i <  Constants.MAX_RANK_LIST; i++)
