@@ -29,6 +29,19 @@ public class CarPartInfos
 
     };
     
+    // 부품 - 가격
+    private Dictionary<CarPartName, int> partPrices = new Dictionary<CarPartName, int>()
+    {
+        { CarPartName.ENGINE_OIL, 77000 },
+        { CarPartName.TIRE, 15000 },
+        { CarPartName.MISSION_OIL, 200000 },
+        { CarPartName.WIPER, 34000 },
+        { CarPartName.BREAK_OIL, 33000 },
+        { CarPartName.TIMING_BELT, 270000 },
+
+    };
+
+    
     // 부품에 따른 한글 이름 반환
     public string GetPartName(CarPartName part)
     {
@@ -48,6 +61,16 @@ public class CarPartInfos
         }
         return -1;
     }
+    
+    // 부품에 따른 가격 반환
+    public int GetPartPrice(CarPartName part)
+    {
+        if (partLifes.ContainsKey(part))
+        {
+            return partPrices[part];
+        }
+        return -1;
+    }
 }
 
 [System.Serializable]
@@ -61,6 +84,9 @@ public class CarData
     
     private int lifespan;            // 수명 (km)
     public int LifeSpan { get { return lifespan;  }}
+
+    private int price;
+    public int Price { get { return price;  }}
     
     public int lastRepairedDistance; //  최근 정비 이후 거리 (km)
     private CarPartInfos partInfos = new CarPartInfos();
@@ -71,6 +97,7 @@ public class CarData
         this.partName = partName;
         lifespan = partInfos.GetPartLife(partName);
         partNameString = partInfos.GetPartName(partName);
+        price = partInfos.GetPartPrice(partName);
     }
 
     // 수리 메서드 : 부품 수리 후 마지막 정비 거리 업데이트

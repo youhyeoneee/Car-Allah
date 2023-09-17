@@ -36,13 +36,13 @@ public class UIManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this.gameObject);
     }
-
-
+    
     public StartUIClass StartUI;
     public GameUIClass GameUI;
     public CarUIClass CarUI;
     public RepairShopUIClass RepairShopUI;
     public GameOverUIClass GameOverUI;
+
     
     [System.Serializable]
     public class GameOverUIClass
@@ -66,6 +66,8 @@ public class UIManager : MonoBehaviour
         public Button backBtn;
         public GameObject repairBtnPrefab;
         private GameManager gameManager;
+        public List<RepairButton> repairBtnList;
+
         public void ActivateUI(bool isActivated)
         {
             uiObject.SetActive(isActivated);
@@ -77,23 +79,54 @@ public class UIManager : MonoBehaviour
             
             if (!gameManager)
                 gameManager = GameManager.Instance;
-            // 정비소 수리 패널 초기화 & 비활성화
-            for (int i = 0; i < gameManager.carDatas.Count; i++)
+
+            repairBtnList = new List<RepairButton>();
+
+            if (repairBtnList.Count == 0)
             {
-            
-                GameObject btnObj = Instantiate(repairBtnPrefab);
-                btnObj.transform.position = repairPanel.transform.position;
+                // 정비소 수리 패널 초기화 & 비활성화
+                for (int i = 0; i < gameManager.carDatas.Count; i++)
+                {
+                    GameObject btnObj = Instantiate(repairBtnPrefab);
+                
+                    btnObj.transform.position = repairPanel.transform.position;
     
-                RectTransform btnpos = btnObj.GetComponent<RectTransform>();
-                btnpos.SetParent(repairPanel.transform, false);
+                    RectTransform btnpos = btnObj.GetComponent<RectTransform>();
+                    btnpos.SetParent(repairPanel.transform, false);
             
-                // 내용 세팅 
-                RepairButton btn = btnObj.GetComponent<RepairButton>();
-    
-                if (btn != null)
-                    btn.SetButton(gameManager.carDatas[i]);
+                    // 내용 세팅 
+                    RepairButton btn = btnObj.GetComponent<RepairButton>();
+                    repairBtnList.Add(btnObj.GetComponent<RepairButton>());
+
+                    if (btn != null)
+                        btn.SetButton(gameManager.carDatas[i]);
+                }
+                
+                // 수리하기 버튼에 업데이트 
+                foreach (var r in repairBtnList)
+                {
+                    r.repairBtn.onClick.AddListener(() =>
+                    {
+                        gameManager.coin -= r._carData.Price; // 가격 지불
+                        UpdateRepairBtns(); 
+                    });
+                }
+            }
+            
+            
+            
+        }
+
+            
+        // 모든 수리하기 버튼 갱신
+        public void UpdateRepairBtns()
+        {
+            foreach (var repairBtn in repairBtnList)
+            {
+                repairBtn.IsAvailable(gameManager.coin);
             }
         }
+        
     }
     
     [System.Serializable]
@@ -121,6 +154,7 @@ public class UIManager : MonoBehaviour
         public GameObject uiObject;
         public Text timeText; // 남은 시간
         public Text distanceText;  // 주행 거리
+        public TMP_Text coinText; // 소지 코인
 
         public void ActivateUI(bool isActivated)
         {
@@ -238,19 +272,13 @@ public class UIManager : MonoBehaviour
     {
         if (isRepairShop)
         {
-            for (int i = 0; i < RepairShopUI.repairPanel.transform.childCount; i++)
+            for (int i = 0; i < RepairShopUI.repairBtnList.Count; i++)
             {
-                GameObject btnObj = RepairShopUI.repairPanel.transform.GetChild(i).gameObject;
                 // 내용 세팅 
-                RepairButton btn = btnObj.GetComponent<RepairButton>();
-
-                if (btn != null)
-                    btn.SetButton(gameManager.carDatas[i]);
+                RepairShopUI.repairBtnList[i].SetButton(gameManager.carDatas[i]);
             }
-        }
-        
-        if (isRepairShop)
-        {
+            
+            RepairShopUI.UpdateRepairBtns();
             RepairShopUI.ActivateUI(true);
             CarUI.ActivateUI(false);
         }
@@ -261,13 +289,12 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public void ShowGameUI(string time, int distanceTraveled)
+    public void ShowGameUI(string time, int distanceTraveled, int coin)
     {
         // Distance UI /////////////////////////////////
-        // 주행 거리 계산 (거리 = 속도 × 시간)
-        
         GameUI.timeText.text = time;
         GameUI.distanceText.text = $"{distanceTraveled.ToString()}";
+        GameUI.coinText.text = coin.ToString("#,##0");
     }
 
 

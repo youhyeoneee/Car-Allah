@@ -12,11 +12,7 @@ public class SimpleCollectibleScript : MonoBehaviour {
 	public AudioClip collectSound;
 
 	public GameObject collectEffect;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
+    
 	
 	// Update is called once per frame
 	void Update () {
@@ -40,8 +36,10 @@ public class SimpleCollectibleScript : MonoBehaviour {
 		if(collectEffect)
 			Instantiate(collectEffect, transform.position, Quaternion.identity);
 
-		// Below is space to add in your code for what happens based on the collectible type
-        
+		if (GameManager.Instance)
+		{
+			GameManager.Instance.coin++;
+		}
 
 		Destroy (gameObject);
 	}

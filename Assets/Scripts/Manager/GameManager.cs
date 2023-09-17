@@ -64,7 +64,8 @@ public class GameManager : MonoBehaviour
     public List<CarData> carDatas;
     public string carNumber;
     public CarData brokenCarData;
-    public int speed = 80;
+    public int coin = 0;
+    private int coinInitAmount = 1200000;
     
     // Time Setting /////////////////////////////////
     private float totalTime = 90.0f; // 총 시간 : 1분 30초
@@ -104,6 +105,8 @@ public class GameManager : MonoBehaviour
             carDatas[i].lastRepairedDistance = 0;
         }
         
+        // 남은 코인 초기화 
+        coin = coinInitAmount;
     }
 
     void Update()
@@ -135,7 +138,7 @@ public class GameManager : MonoBehaviour
                     if (minute < 0) minute = 0.0f;
                     if (second < 0) second = 0.0f;
 
-                    uiManager.ShowGameUI(ChangeTimeToString(minute, second), distanceTraveled);
+                    uiManager.ShowGameUI(ChangeTimeToString(minute, second), distanceTraveled, coin);
 
                     if (!target)
                     {
