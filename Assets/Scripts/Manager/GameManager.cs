@@ -68,13 +68,14 @@ public class GameManager : MonoBehaviour
     private int coinInitAmount = 1200000;
     
     // Time Setting /////////////////////////////////
-    private float totalTime = 90.0f; // 총 시간 : 1분 30초
+    private float totalTime = 120.0f; // 총 시간 : 2분
     private float remainTime; // 경과 시간
     private float minute, second;
 
     // Distance Setting /////////////////////////////////
     private int distanceTraveled = 0; // 주행 거리 (단위: km)
     private VehicleControl carScript;
+    private int offset = 50000;
 
     // Singleton Object /////////////////////////////////
     private UIManager uiManager;
@@ -163,7 +164,7 @@ public class GameManager : MonoBehaviour
 
 
                         // 거리 계산 (과장된 거리)
-                        int distance = (int)(carScript.speed * ((Time.deltaTime) / 3600f) * 20000); // 시간을 초로 변환
+                        int distance = (int)(carScript.speed * (Time.deltaTime / 3600f) * offset); // 시간을 초로 변환
                         distanceTraveled += distance;
                         UpdateCarData(distance);
                     }
