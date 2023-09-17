@@ -49,7 +49,7 @@ public class CarPartInfos
         {
             return partNames[part];
         }
-        return "Unknown";
+        return String.Empty;
     }
     
     // 부품에 따른 수명 반환
@@ -59,7 +59,7 @@ public class CarPartInfos
         {
             return partLifes[part];
         }
-        return -1;
+        return 0;
     }
     
     // 부품에 따른 가격 반환
@@ -69,7 +69,7 @@ public class CarPartInfos
         {
             return partPrices[part];
         }
-        return -1;
+        return 0;
     }
 }
 
@@ -77,21 +77,25 @@ public class CarPartInfos
 public class CarData 
 {
     
-    private CarPartName partName; // 부품 이름 (enum)
+    public CarPartName partName; // 부품 이름 (enum)
     public CarPartName PartName { get { return partName; }}
-    private string partNameString; // 부품 이름 (string)
+    public string partNameString; // 부품 이름 (string)
     public string PartNameString { get { return partNameString; }}
     
-    private int lifespan;            // 수명 (km)
+    public int lifespan;            // 수명 (km)
     public int LifeSpan { get { return lifespan;  }}
 
-    private int price;
+    public int price;
     public int Price { get { return price;  }}
     
     public int lastRepairedDistance; //  최근 정비 이후 거리 (km)
     private CarPartInfos partInfos = new CarPartInfos();
-    
+
     // 생성자
+    public CarData()
+    {
+        partNameString = String.Empty;
+    }
     public CarData(CarPartName partName)
     {
         this.partName = partName;

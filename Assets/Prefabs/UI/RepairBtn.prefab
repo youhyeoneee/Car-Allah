@@ -219,7 +219,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBE0C\uB808\uC774\uD06C \uC624\uC77C"
+  m_text: '-'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eb7d965d3e0ba4530937dadddd1c3af6, type: 2}
   m_sharedMaterial: {fileID: -96138988727993109, guid: eb7d965d3e0ba4530937dadddd1c3af6, type: 2}
@@ -384,7 +384,11 @@ MonoBehaviour:
   lastRepairedDistanceText: {fileID: 6292950814305255408}
   repairBtn: {fileID: 1036182531635892007}
   priceText: {fileID: 1785466305992883176}
-  _carData:
+  carData:
+    partName: 0
+    partNameString: 
+    lifespan: 0
+    price: 0
     lastRepairedDistance: 0
 --- !u!1 &4551753277104244673
 GameObject:
@@ -452,7 +456,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC218\uB9AC \uC774\uD6C4 \\n11km \uC8FC\uD589\uD568."
+  m_text: '-'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eb7d965d3e0ba4530937dadddd1c3af6, type: 2}
   m_sharedMaterial: {fileID: -96138988727993109, guid: eb7d965d3e0ba4530937dadddd1c3af6, type: 2}
@@ -710,7 +714,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC218\uB9AC 77000\n"
+  m_text: '-'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eb7d965d3e0ba4530937dadddd1c3af6, type: 2}
   m_sharedMaterial: {fileID: -96138988727993109, guid: eb7d965d3e0ba4530937dadddd1c3af6, type: 2}

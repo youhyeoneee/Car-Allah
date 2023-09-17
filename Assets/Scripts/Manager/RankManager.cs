@@ -36,7 +36,7 @@ public class RankManager : MonoBehaviour
         {
             if (!instance)
             {                
-                Debug.LogWarning("Rank Manager Instance is null");
+                // Debug.LogWarning("Rank Manager Instance is null");
             }
 
             return instance;

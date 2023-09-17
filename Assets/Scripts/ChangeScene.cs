@@ -9,22 +9,26 @@ using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour
 {
-    private GameManager gameManager;
-
+    
     public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
-        
-        if (GameManager.Instance != null)
+        var gameManager = GameManager.Instance;
+
+        if (gameManager == null)
         {
-            if (sceneName == SceneNames.RepairShopScene)
-            {
-                GameManager.Instance.onRepairShop.Invoke(true);
-            }
-            else if (sceneName == SceneNames.RacingScene)
-            {
-                GameManager.Instance.onRepairShop.Invoke(false);
-            }
+            Debug.LogWarning("GameManager is null");
+            return;
+        }
+
+        SceneManager.LoadScene(sceneName);
+
+        if (sceneName == SceneNames.RepairShopScene)
+        {
+            gameManager.onRepairShop.Invoke(true);
+        }
+        else if (sceneName == SceneNames.RacingScene)
+        {
+            gameManager.onRepairShop.Invoke(false);
         }
     }
     

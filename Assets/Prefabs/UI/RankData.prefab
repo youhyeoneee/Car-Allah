@@ -514,7 +514,7 @@ GameObject:
   - component: {fileID: 7244182063036697838}
   - component: {fileID: 7244182063036697833}
   m_Layer: 5
-  m_Name: 'carNumberText '
+  m_Name: 'nickNameText '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

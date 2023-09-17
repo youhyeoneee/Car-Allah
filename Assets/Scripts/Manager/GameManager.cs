@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         {
             if (!instance)
             {
-                Debug.LogWarning("Game Manager Instance is null");
+                // Debug.LogWarning("Game Manager Instance is null");
             }
 
             return instance;
@@ -108,6 +108,9 @@ public class GameManager : MonoBehaviour
         
         // 남은 코인 초기화 
         coin = coinInitAmount;
+        
+        // 차량 고장 부품 초기화
+        brokenCarData = new CarData();
     }
 
     void Update()
@@ -116,7 +119,6 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.Waiting:
-                uiManager.CarUI.ActivateUI(false);
                 break;
             case GameState.Playing:
                 if (remainTime > 0.0f)
@@ -127,8 +129,6 @@ public class GameManager : MonoBehaviour
                         gameOver.Invoke(false, ChangeTimeToString(minute, second), distanceTraveled);
                         return;
                     }
-
-  
                     
                     // 시간 계산 및 UI 표시
                     remainTime -= Time.deltaTime;
@@ -160,16 +160,13 @@ public class GameManager : MonoBehaviour
                         }
                         
                         // 계기판 UI 표시 
-                        uiManager.CarUI.ShowCarUI(carScript);
-
-
+                        uiManager.carUI.UpdateUI(carScript);
+                        
                         // 거리 계산 (과장된 거리)
                         int distance = (int)(carScript.speed * (Time.deltaTime / 3600f) * offset); // 시간을 초로 변환
                         distanceTraveled += distance;
                         UpdateCarData(distance);
                     }
-
-
                 }
                 else
                 {
@@ -179,7 +176,6 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GameOver:
-                Debug.Log("GAME OVER");
                 carScript.activeControl = false;
                 break;
         }
@@ -212,8 +208,10 @@ public class GameManager : MonoBehaviour
 
     private void InitCarData()
     {
-        foreach(CarPartName enumItem in System.Enum.GetValues(typeof(CarPartName)))
+        System.Array enumValues = System.Enum.GetValues(typeof(CarPartName));
+        for (int i = 0; i < enumValues.Length; i++)
         {
+            CarPartName enumItem = (CarPartName)enumValues.GetValue(i);
             CarData newCarData = new CarData(enumItem);
             carDatas.Add(newCarData);
         }
@@ -234,8 +232,8 @@ public class GameManager : MonoBehaviour
     public void GameStart()
     {
         gameState = GameState.Playing;
-        carNumber = uiManager.StartUI.carNumberInput.text; // 차량 넘버
-        uiManager.CarUI.ActivateUI(true);
+        carNumber = uiManager.startUI.nickNameInput.text; // 차량 넘버
+
         Init();
     }
 

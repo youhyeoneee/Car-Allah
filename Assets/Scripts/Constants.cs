@@ -2,7 +2,7 @@
 public static class Constants 
 {
     public static readonly int MAX_RANK_LIST = 20;
-    public static readonly string RANKING_KEY = "RankDataTest";
+    public static readonly string RANKING_KEY = "RankData";
 }
 
 public static class SceneNames
