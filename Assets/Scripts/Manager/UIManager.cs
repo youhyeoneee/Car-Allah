@@ -328,6 +328,7 @@ public class UIManager : MonoBehaviour
         GameOverUI.distanceText.text = $"주행 거리 : {distance} km";
         
         GameUI.ActivateUI(false);
+        RepairShopUI.ActivateUI(false);
         CarUI.ActivateUI(false);
     }
 

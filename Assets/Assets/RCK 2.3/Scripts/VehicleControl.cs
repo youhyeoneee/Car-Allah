@@ -433,9 +433,13 @@ public class VehicleControl : MonoBehaviour
 
     public void StopCar()
     {
-        myRigidbody.velocity = Vector3.zero; 
-        myRigidbody.angularVelocity = Vector3.zero; //( addTorque 사용시)
-        myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
+        if (myRigidbody)
+        {
+            myRigidbody.velocity = Vector3.zero; 
+            myRigidbody.angularVelocity = Vector3.zero; //( addTorque 사용시)
+            myRigidbody.MoveRotation(Quaternion.Euler(0, transform.eulerAngles.y, 0));
+        }
+ 
     }
     void OnCollisionEnter(Collision collision)
     {
